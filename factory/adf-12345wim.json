@@ -1,0 +1,9 @@
+{
+	"name": "adf-12345wim",
+	"location": "northeurope",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "7db4bae9-70b3-40e9-a059-0591eeb6647b",
+		"tenantId": "10c468a6-a5e9-4718-8edf-30da5a39ff2d"
+	}
+}

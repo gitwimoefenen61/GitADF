@@ -1,0 +1,13 @@
+{
+	"name": "SourceDataset_yu3",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "connectiewim",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

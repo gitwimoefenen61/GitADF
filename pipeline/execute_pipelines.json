@@ -1,0 +1,27 @@
+{
+	"name": "execute_pipelines",
+	"properties": {
+		"activities": [
+			{
+				"name": "Execute Pipeline1",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pipeline_parameters",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"inputfilename": "Sales_Derive.csv",
+						"outputfilename": "out.csv"
+					}
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2021-08-28T09:51:08Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

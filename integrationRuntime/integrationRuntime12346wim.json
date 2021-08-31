@@ -1,0 +1,6 @@
+{
+	"name": "integrationRuntime12346wim",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}
