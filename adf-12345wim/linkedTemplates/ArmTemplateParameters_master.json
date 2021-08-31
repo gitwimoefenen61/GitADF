@@ -1,0 +1,60 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "adf-12345wim"
+		},
+		"AzureBlobStorage1DLSlab2_connectionString": {
+			"value": ""
+		},
+		"AzureBlobStorage1lab2_connectionString": {
+			"value": ""
+		},
+		"AzureDataLakeStorage1_accountKey": {
+			"value": ""
+		},
+		"AzureDataLakeStorage2_accountKey": {
+			"value": ""
+		},
+		"AzureDataLakeStorage3lab2_accountKey": {
+			"value": ""
+		},
+		"AzureSqlDatabase_LS_connectionString": {
+			"value": ""
+		},
+		"AzureSqlDatabasewimlab2_connectionString": {
+			"value": ""
+		},
+		"AzureSqlTablewimservice_connectionString": {
+			"value": ""
+		},
+		"AzureStorageLinkedService_connectionString": {
+			"value": ""
+		},
+		"connectiecloud_connectionString": {
+			"value": ""
+		},
+		"connectiewim_connectionString": {
+			"value": ""
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"value": "https://awdlsstudwi1.dfs.core.windows.net"
+		},
+		"AzureDataLakeStorage2_properties_typeProperties_url": {
+			"value": "https://awdlsstudwi1.dfs.core.windows.net"
+		},
+		"AzureDataLakeStorage3lab2_properties_typeProperties_url": {
+			"value": "https://awdlsstudwi1.dfs.core.windows.net"
+		},
+		"nieuw_properties_typeProperties_url": {
+			"value": "https://raw.githubusercontent.com/djpmsft/adf-ready-demo/master/moviesDB.csv"
+		},
+		"containerUri": {
+			"value": ""
+		},
+		"containerSasToken": {
+			"value": ""
+		}
+	}
+}
