@@ -15,6 +15,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureBlobStorage1lab2'"
 		},
+		"AzureDataLakeStorage_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage'"
+		},
 		"AzureDataLakeStorage1_accountKey": {
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage1'"
@@ -43,6 +47,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureStorageLinkedService'"
 		},
+		"AzureSynapseAnalytics_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSynapseAnalytics'"
+		},
 		"connectiecloud_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'connectiecloud'"
@@ -50,6 +58,10 @@
 		"connectiewim_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'connectiewim'"
+		},
+		"AzureDataLakeStorage_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://datalake20006.dfs.core.windows.net/"
 		},
 		"AzureDataLakeStorage1_properties_typeProperties_url": {
 			"type": "string",
@@ -100,6 +112,9 @@
 					"AzureBlobStorage1lab2_connectionString": {
 						"value": "[parameters('AzureBlobStorage1lab2_connectionString')]"
 					},
+					"AzureDataLakeStorage_accountKey": {
+						"value": "[parameters('AzureDataLakeStorage_accountKey')]"
+					},
 					"AzureDataLakeStorage1_accountKey": {
 						"value": "[parameters('AzureDataLakeStorage1_accountKey')]"
 					},
@@ -121,8 +136,14 @@
 					"AzureStorageLinkedService_connectionString": {
 						"value": "[parameters('AzureStorageLinkedService_connectionString')]"
 					},
+					"AzureSynapseAnalytics_connectionString": {
+						"value": "[parameters('AzureSynapseAnalytics_connectionString')]"
+					},
 					"connectiecloud_connectionString": {
 						"value": "[parameters('connectiecloud_connectionString')]"
+					},
+					"AzureDataLakeStorage_properties_typeProperties_url": {
+						"value": "[parameters('AzureDataLakeStorage_properties_typeProperties_url')]"
 					},
 					"AzureDataLakeStorage1_properties_typeProperties_url": {
 						"value": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]"
@@ -161,6 +182,26 @@
 			},
 			"dependsOn": [
 				"[resourceId('Microsoft.Resources/deployments', 'adf-12345wim_ArmTemplate_0')]"
+			]
+		},
+		{
+			"name": "adf-12345wim_ArmTemplate_2",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_2.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'adf-12345wim_ArmTemplate_1')]"
 			]
 		}
 	]

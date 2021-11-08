@@ -11,6 +11,9 @@
 		"AzureBlobStorage1lab2_connectionString": {
 			"value": ""
 		},
+		"AzureDataLakeStorage_accountKey": {
+			"value": ""
+		},
 		"AzureDataLakeStorage1_accountKey": {
 			"value": ""
 		},
@@ -32,11 +35,17 @@
 		"AzureStorageLinkedService_connectionString": {
 			"value": ""
 		},
+		"AzureSynapseAnalytics_connectionString": {
+			"value": ""
+		},
 		"connectiecloud_connectionString": {
 			"value": ""
 		},
 		"connectiewim_connectionString": {
 			"value": ""
+		},
+		"AzureDataLakeStorage_properties_typeProperties_url": {
+			"value": "https://datalake20006.dfs.core.windows.net/"
 		},
 		"AzureDataLakeStorage1_properties_typeProperties_url": {
 			"value": "https://awdlsstudwi1.dfs.core.windows.net"
