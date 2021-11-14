@@ -31,6 +31,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'accountKey' of 'AzureDataLakeStorage3lab2'"
 		},
+		"AzureSqlDatabase104_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase104'"
+		},
 		"AzureSqlDatabase_LS_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase_LS'"
@@ -124,6 +128,9 @@
 					"AzureDataLakeStorage3lab2_accountKey": {
 						"value": "[parameters('AzureDataLakeStorage3lab2_accountKey')]"
 					},
+					"AzureSqlDatabase104_connectionString": {
+						"value": "[parameters('AzureSqlDatabase104_connectionString')]"
+					},
 					"AzureSqlDatabase_LS_connectionString": {
 						"value": "[parameters('AzureSqlDatabase_LS_connectionString')]"
 					},
@@ -174,9 +181,6 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
-					},
-					"connectiewim_connectionString": {
-						"value": "[parameters('connectiewim_connectionString')]"
 					}
 				}
 			},
@@ -197,6 +201,9 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"connectiewim_connectionString": {
+						"value": "[parameters('connectiewim_connectionString')]"
 					}
 				}
 			},

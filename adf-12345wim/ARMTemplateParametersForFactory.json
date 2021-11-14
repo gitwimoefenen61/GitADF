@@ -23,6 +23,9 @@
 		"AzureDataLakeStorage3lab2_accountKey": {
 			"value": ""
 		},
+		"AzureSqlDatabase104_connectionString": {
+			"value": ""
+		},
 		"AzureSqlDatabase_LS_connectionString": {
 			"value": ""
 		},
