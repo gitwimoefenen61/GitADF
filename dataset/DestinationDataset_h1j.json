@@ -1,0 +1,15 @@
+{
+	"name": "DestinationDataset_h1j",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSynapseAnalytics",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [],
+		"typeProperties": {
+			"table": "<Custom query>"
+		}
+	}
+}
