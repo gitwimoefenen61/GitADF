@@ -3676,6 +3676,205 @@
 				"[concat(variables('factoryId'), '/datasets/SalesOrderHeaderDt')]",
 				"[concat(variables('factoryId'), '/datasets/SalesFactSynapse')]"
 			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DimensionFlow')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "CustomerDt",
+								"type": "DatasetReference"
+							},
+							"name": "CustomerStream"
+						},
+						{
+							"dataset": {
+								"referenceName": "StoreDt",
+								"type": "DatasetReference"
+							},
+							"name": "StoreStream"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "DimCustomerDt",
+								"type": "DatasetReference"
+							},
+							"name": "sink1"
+						}
+					],
+					"transformations": [
+						{
+							"name": "CustomerJoinStore"
+						},
+						{
+							"name": "SelectColumns"
+						},
+						{
+							"name": "RemoveNulls"
+						}
+					],
+					"script": "source(output(\n\t\tCustomerID as integer,\n\t\tPersonID as integer,\n\t\tStoreID as integer,\n\t\tTerritoryID as integer,\n\t\tAccountNumber as string,\n\t\trowguid as string,\n\t\tModifiedDate as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> CustomerStream\nsource(output(\n\t\tBusinessEntityID as integer,\n\t\tName as string,\n\t\tSalesPersonID as integer,\n\t\tDemographics as string,\n\t\trowguid as string,\n\t\tModifiedDate as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> StoreStream\nCustomerStream, StoreStream join(StoreID == BusinessEntityID,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> CustomerJoinStore\nCustomerJoinStore select(mapColumn(\n\t\tCustomerID,\n\t\tStoreID,\n\t\tBusinessEntityID,\n\t\tName\n\t),\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SelectColumns\nSelectColumns alterRow(deleteIf(isNull(BusinessEntityID))) ~> RemoveNulls\nRemoveNulls sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tCustomerID as integer,\n\t\tStoreID as integer,\n\t\tBusinessEntityID as integer,\n\t\tStoreName as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tCustomerID,\n\t\tStoreID,\n\t\tBusinessEntityID,\n\t\tStoreName = Name\n\t)) ~> sink1"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/CustomerDt')]",
+				"[concat(variables('factoryId'), '/datasets/StoreDt')]",
+				"[concat(variables('factoryId'), '/datasets/DimCustomerDt')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/CustomerDt')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase104",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "CustomerID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "PersonID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "StoreID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "TerritoryID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "AccountNumber",
+						"type": "varchar"
+					},
+					{
+						"name": "rowguid",
+						"type": "uniqueidentifier"
+					},
+					{
+						"name": "ModifiedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "Sales",
+					"table": "Customer"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase104')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/StoreDt')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase104",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "BusinessEntityID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Name",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SalesPersonID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "Demographics",
+						"type": "xml"
+					},
+					{
+						"name": "rowguid",
+						"type": "uniqueidentifier"
+					},
+					{
+						"name": "ModifiedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "Sales",
+					"table": "Store"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase104')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/DimCustomerDt')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase104",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "CustomerID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "StoreID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "BusinessEntityID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "StoreName",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "dimcustomer11"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase104')]"
+			]
 		}
 	]
 }
