@@ -1,0 +1,39 @@
+{
+	"name": "dataflowexportdimproduct",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlnewdbdimprod",
+						"type": "DatasetReference"
+					},
+					"name": "dimproductstream"
+				},
+				{
+					"dataset": {
+						"referenceName": "AzureSqlnewdbdimexportprod",
+						"type": "DatasetReference"
+					},
+					"name": "dimexportproductsstream"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "AzureSqlnewdbdimexportprod",
+						"type": "DatasetReference"
+					},
+					"name": "sinkexportdimprod"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Exists1"
+				}
+			],
+			"script": "source(output(\n\t\tProductID as integer,\n\t\tProductModelID as integer,\n\t\tProductSubcategoryID as integer,\n\t\tProductName as string,\n\t\tSafetyStockLevel as integer,\n\t\tProductModelName as string,\n\t\tProductSubCategoryName as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> dimproductstream\nsource(output(\n\t\tProductID as integer,\n\t\tProductModelID as integer,\n\t\tProductSubcategoryID as integer,\n\t\tProductName as string,\n\t\tSafetyStockLevel as integer,\n\t\tProductModelName as string,\n\t\tProductSubCategoryName as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> dimexportproductsstream\ndimproductstream, dimexportproductsstream exists(dimproductstream@ProductID == dimexportproductsstream@ProductID,\n\tnegate:true,\n\tbroadcast: 'auto')~> Exists1\nExists1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tProductID as integer,\n\t\tProductModelID as integer,\n\t\tProductSubcategoryID as integer,\n\t\tProductName as string,\n\t\tSafetyStockLevel as integer,\n\t\tProductModelName as string,\n\t\tProductSubCategoryName as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tProductID,\n\t\tProductModelID,\n\t\tProductSubcategoryID,\n\t\tProductName,\n\t\tSafetyStockLevel,\n\t\tProductModelName,\n\t\tProductSubCategoryName\n\t)) ~> sinkexportdimprod"
+		}
+	}
+}
