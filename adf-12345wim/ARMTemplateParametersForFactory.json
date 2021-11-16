@@ -26,6 +26,9 @@
 		"AzureSqlDatabase104_connectionString": {
 			"value": ""
 		},
+		"AzureSqlDatabaseNewDB_connectionString": {
+			"value": ""
+		},
 		"AzureSqlDatabase_LS_connectionString": {
 			"value": ""
 		},

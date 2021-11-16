@@ -35,6 +35,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase104'"
 		},
+		"AzureSqlDatabaseNewDB_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabaseNewDB'"
+		},
 		"AzureSqlDatabase_LS_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase_LS'"
@@ -130,6 +134,9 @@
 					},
 					"AzureSqlDatabase104_connectionString": {
 						"value": "[parameters('AzureSqlDatabase104_connectionString')]"
+					},
+					"AzureSqlDatabaseNewDB_connectionString": {
+						"value": "[parameters('AzureSqlDatabaseNewDB_connectionString')]"
 					},
 					"AzureSqlDatabase_LS_connectionString": {
 						"value": "[parameters('AzureSqlDatabase_LS_connectionString')]"

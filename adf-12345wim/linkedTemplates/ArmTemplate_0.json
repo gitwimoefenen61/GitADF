@@ -35,6 +35,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase104'"
 		},
+		"AzureSqlDatabaseNewDB_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabaseNewDB'"
+		},
 		"AzureSqlDatabase_LS_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase_LS'"
@@ -240,6 +244,19 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabaseNewDB')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureSqlDatabaseNewDB_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabase_LS')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -373,62 +390,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureSqlTablewimservice')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/CustomerDt')]",
-			"type": "Microsoft.DataFactory/factories/datasets",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"linkedServiceName": {
-					"referenceName": "AzureSqlDatabase104",
-					"type": "LinkedServiceReference"
-				},
-				"annotations": [],
-				"type": "AzureSqlTable",
-				"schema": [
-					{
-						"name": "CustomerID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "PersonID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "StoreID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "TerritoryID",
-						"type": "int",
-						"precision": 10
-					},
-					{
-						"name": "AccountNumber",
-						"type": "varchar"
-					},
-					{
-						"name": "rowguid",
-						"type": "uniqueidentifier"
-					},
-					{
-						"name": "ModifiedDate",
-						"type": "datetime",
-						"precision": 23,
-						"scale": 3
-					}
-				],
-				"typeProperties": {
-					"schema": "Sales",
-					"table": "Customer"
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabase104')]"
 			]
 		}
 	]

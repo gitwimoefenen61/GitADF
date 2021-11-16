@@ -35,6 +35,10 @@
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase104'"
 		},
+		"AzureSqlDatabaseNewDB_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabaseNewDB'"
+		},
 		"AzureSqlDatabase_LS_connectionString": {
 			"type": "secureString",
 			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase_LS'"
@@ -1976,6 +1980,114 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlnewdbdimexportprod')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabaseNewDB",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ProductID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProductModelID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProductSubcategoryID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProductName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SafetyStockLevel",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "ProductModelName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ProductSubCategoryName",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "export_dimproduct"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabaseNewDB')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlnewdbdimprod')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabaseNewDB",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ProductID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProductModelID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProductSubcategoryID",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ProductName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "SafetyStockLevel",
+						"type": "smallint",
+						"precision": 5
+					},
+					{
+						"name": "ProductModelName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ProductSubCategoryName",
+						"type": "nvarchar"
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "dimproduct"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabaseNewDB')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/CustomerDt')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -3693,6 +3805,19 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabaseNewDB')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureSqlDatabase",
+				"typeProperties": {
+					"connectionString": "[parameters('AzureSqlDatabaseNewDB_connectionString')]"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/AzureSqlDatabase_LS')]",
 			"type": "Microsoft.DataFactory/factories/linkedServices",
 			"apiVersion": "2018-06-01",
@@ -3876,6 +4001,51 @@
 				"[concat(variables('factoryId'), '/datasets/CustomerDt')]",
 				"[concat(variables('factoryId'), '/datasets/StoreDt')]",
 				"[concat(variables('factoryId'), '/datasets/DimCustomerDt')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/dataflowexportdimproduct')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "AzureSqlnewdbdimprod",
+								"type": "DatasetReference"
+							},
+							"name": "dimproductstream"
+						},
+						{
+							"dataset": {
+								"referenceName": "AzureSqlnewdbdimexportprod",
+								"type": "DatasetReference"
+							},
+							"name": "dimexportproductsstream"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "AzureSqlnewdbdimexportprod",
+								"type": "DatasetReference"
+							},
+							"name": "sinkexportdimprod"
+						}
+					],
+					"transformations": [
+						{
+							"name": "Exists1"
+						}
+					],
+					"script": "source(output(\n\t\tProductID as integer,\n\t\tProductModelID as integer,\n\t\tProductSubcategoryID as integer,\n\t\tProductName as string,\n\t\tSafetyStockLevel as integer,\n\t\tProductModelName as string,\n\t\tProductSubCategoryName as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> dimproductstream\nsource(output(\n\t\tProductID as integer,\n\t\tProductModelID as integer,\n\t\tProductSubcategoryID as integer,\n\t\tProductName as string,\n\t\tSafetyStockLevel as integer,\n\t\tProductModelName as string,\n\t\tProductSubCategoryName as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> dimexportproductsstream\ndimproductstream, dimexportproductsstream exists(dimproductstream@ProductID == dimexportproductsstream@ProductID,\n\tnegate:true,\n\tbroadcast: 'auto')~> Exists1\nExists1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tProductID as integer,\n\t\tProductModelID as integer,\n\t\tProductSubcategoryID as integer,\n\t\tProductName as string,\n\t\tSafetyStockLevel as integer,\n\t\tProductModelName as string,\n\t\tProductSubCategoryName as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tProductID,\n\t\tProductModelID,\n\t\tProductSubcategoryID,\n\t\tProductName,\n\t\tSafetyStockLevel,\n\t\tProductModelName,\n\t\tProductSubCategoryName\n\t)) ~> sinkexportdimprod"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/AzureSqlnewdbdimprod')]",
+				"[concat(variables('factoryId'), '/datasets/AzureSqlnewdbdimexportprod')]"
 			]
 		},
 		{
