@@ -24,6 +24,14 @@
 			{
 				"name": "courses",
 				"type": "varchar"
+			},
+			{
+				"name": "mobile",
+				"type": "varchar"
+			},
+			{
+				"name": "city",
+				"type": "varchar"
 			}
 		],
 		"typeProperties": {
