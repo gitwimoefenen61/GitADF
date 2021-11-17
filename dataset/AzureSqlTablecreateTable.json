@@ -1,0 +1,12 @@
+{
+	"name": "AzureSqlTablecreateTable",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabaseNewDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": []
+	}
+}
