@@ -938,7 +938,42 @@
 							"name": "FlattenStream"
 						}
 					],
-					"script": "source(output(\n\t\tcustomerid as integer,\n\t\tcustomername as string,\n\t\tregistered as boolean,\n\t\tcourses as string[]\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tdocumentForm: 'arrayOfDocuments') ~> Customerstream\nCustomerstream foldDown(unroll(courses, courses),\n\tmapColumn(\n\t\tcustomerid,\n\t\tcustomername,\n\t\tregistered,\n\t\tcourses\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> FlattenStream\nFlattenStream sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tcustomerid as integer,\n\t\tcustomername as string,\n\t\tregistered as boolean,\n\t\tcourses as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> Customersynapse"
+					"script": "source(output(\n\t\tcustomerid as integer,\n\t\tcustomername as string,\n\t\tregistered as boolean,\n\t\tcourses as string[],\n\t\tdetails as (mobile as string, city as string)\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tdocumentForm: 'arrayOfDocuments') ~> Customerstream\nCustomerstream foldDown(unroll(courses, courses),\n\tmapColumn(\n\t\tcustomerid,\n\t\tcustomername,\n\t\tregistered,\n\t\tcourses\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> FlattenStream\nFlattenStream sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tcustomerid as integer,\n\t\tcustomername as string,\n\t\tregistered as boolean,\n\t\tcourses as string,\n\t\tmobile as string,\n\t\tcity as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tcustomerid,\n\t\tcustomername,\n\t\tregistered,\n\t\tcourses\n\t)) ~> Customersynapse"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/customerdataflow_copy1')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Customercoursedt",
+								"type": "DatasetReference"
+							},
+							"name": "Customerstream"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Customersynapsedt",
+								"type": "DatasetReference"
+							},
+							"name": "Customersynapse"
+						}
+					],
+					"transformations": [
+						{
+							"name": "FlattenStream"
+						}
+					],
+					"script": "source(output(\n\t\tcustomerid as integer,\n\t\tcustomername as string,\n\t\tregistered as boolean,\n\t\tcourses as string[],\n\t\tdetails as (mobile as string, city as string)\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tdocumentForm: 'arrayOfDocuments') ~> Customerstream\nCustomerstream foldDown(unroll(courses, courses),\n\tmapColumn(\n\t\tcourses,\n\t\tcustomerid,\n\t\tcustomername,\n\t\tregistered,\n\t\tmobile = details.mobile,\n\t\tcity = details.city\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> FlattenStream\nFlattenStream sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tcustomerid as integer,\n\t\tcustomername as string,\n\t\tregistered as boolean,\n\t\tcourses as string,\n\t\tmobile as string,\n\t\tcity as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tcustomerid,\n\t\tcustomername,\n\t\tregistered,\n\t\tcourses,\n\t\tmobile,\n\t\tcity\n\t)) ~> Customersynapse"
 				}
 			},
 			"dependsOn": []
@@ -1203,54 +1238,6 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/pipelines/pipeline_parameters')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/pipelineexportprod')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "Data flow1",
-						"type": "ExecuteDataFlow",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "1.00:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"dataflow": {
-								"referenceName": "dataflowexportdimproduct",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"dimproductstream": {},
-									"dimexportproductsstream": {},
-									"sinkexportdimprod": {}
-								}
-							},
-							"staging": {},
-							"compute": {
-								"coreCount": 8,
-								"computeType": "General"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/dataflows/dataflowexportdimproduct')]"
 			]
 		}
 	]

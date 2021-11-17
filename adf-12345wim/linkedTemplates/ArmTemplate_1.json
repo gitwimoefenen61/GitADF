@@ -206,6 +206,17 @@
 							"items": {
 								"type": "string"
 							}
+						},
+						"details": {
+							"type": "object",
+							"properties": {
+								"mobile": {
+									"type": "string"
+								},
+								"city": {
+									"type": "string"
+								}
+							}
 						}
 					}
 				}
@@ -239,6 +250,14 @@
 					},
 					{
 						"name": "courses",
+						"type": "varchar"
+					},
+					{
+						"name": "mobile",
+						"type": "varchar"
+					},
+					{
+						"name": "city",
 						"type": "varchar"
 					}
 				],
