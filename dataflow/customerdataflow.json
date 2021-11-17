@@ -1,0 +1,32 @@
+{
+	"name": "customerdataflow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Customercoursedt",
+						"type": "DatasetReference"
+					},
+					"name": "Customerstream"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "Customersynapsedt",
+						"type": "DatasetReference"
+					},
+					"name": "Customersynapse"
+				}
+			],
+			"transformations": [
+				{
+					"name": "FlattenStream"
+				}
+			],
+			"script": "source(output(\n\t\tcustomerid as integer,\n\t\tcustomername as string,\n\t\tregistered as boolean,\n\t\tcourses as string[]\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tdocumentForm: 'arrayOfDocuments') ~> Customerstream\nCustomerstream foldDown(unroll(courses, courses),\n\tmapColumn(\n\t\tcustomerid,\n\t\tcustomername,\n\t\tregistered,\n\t\tcourses\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> FlattenStream\nFlattenStream sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tcustomerid as integer,\n\t\tcustomername as string,\n\t\tregistered as boolean,\n\t\tcourses as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> Customersynapse"
+		}
+	}
+}
