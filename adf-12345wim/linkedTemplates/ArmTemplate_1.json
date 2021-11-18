@@ -809,7 +809,7 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/ParquetLog')]",
+			"name": "[concat(parameters('factoryName'), '/Logsourcetime')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
@@ -818,59 +818,63 @@
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
-				"type": "Parquet",
+				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"folderPath": "raw/parquet",
+						"fileName": "Log.csv",
+						"folderPath": "raw",
 						"fileSystem": "data"
 					},
-					"compressionCodec": "snappy"
+					"columnDelimiter": ",",
+					"escapeChar": "\\",
+					"firstRowAsHeader": true,
+					"quoteChar": "\""
 				},
 				"schema": [
 					{
 						"name": "Id",
-						"type": "INT32"
+						"type": "String"
 					},
 					{
 						"name": "Correlationid",
-						"type": "UTF8"
+						"type": "String"
 					},
 					{
 						"name": "Operationname",
-						"type": "UTF8"
+						"type": "String"
 					},
 					{
 						"name": "Status",
-						"type": "UTF8"
+						"type": "String"
 					},
 					{
 						"name": "Eventcategory",
-						"type": "UTF8"
+						"type": "String"
 					},
 					{
 						"name": "Level",
-						"type": "UTF8"
+						"type": "String"
 					},
 					{
 						"name": "Time",
-						"type": "INT96"
+						"type": "String"
 					},
 					{
 						"name": "Subscription",
-						"type": "UTF8"
+						"type": "String"
 					},
 					{
 						"name": "Eventinitiatedby",
-						"type": "UTF8"
+						"type": "String"
 					},
 					{
 						"name": "Resourcetype",
-						"type": "UTF8"
+						"type": "String"
 					},
 					{
 						"name": "Resourcegroup",
-						"type": "UTF8"
+						"type": "String"
 					}
 				]
 			},
