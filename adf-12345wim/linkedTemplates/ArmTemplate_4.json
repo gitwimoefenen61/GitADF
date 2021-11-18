@@ -431,7 +431,7 @@
 								"parameters": {},
 								"datasetParameters": {
 									"logstream": {},
-									"logstreamoutput": {}
+									"sinkothercolumns": {}
 								}
 							},
 							"staging": {},

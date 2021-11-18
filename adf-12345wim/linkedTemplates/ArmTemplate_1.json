@@ -822,7 +822,7 @@
 				"schema": [],
 				"typeProperties": {
 					"schema": "dbo",
-					"table": "log2"
+					"table": "log3"
 				}
 			},
 			"dependsOn": []

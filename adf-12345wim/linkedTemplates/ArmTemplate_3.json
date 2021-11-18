@@ -1644,7 +1644,7 @@
 								"referenceName": "Logdt",
 								"type": "DatasetReference"
 							},
-							"name": "logstreamoutput"
+							"name": "sinkothercolumns"
 						}
 					],
 					"transformations": [
@@ -1652,7 +1652,7 @@
 							"name": "splitresourcegroup"
 						}
 					],
-					"script": "source(output(\n\t\tId as string,\n\t\tCorrelationid as string,\n\t\tOperationname as string,\n\t\tStatus as string,\n\t\tEventcategory as string,\n\t\tLevel as string,\n\t\tTime as string,\n\t\tSubscription as string,\n\t\tEventinitiatedby as string,\n\t\tResourcetype as string,\n\t\tResourcegroup as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> logstream\nlogstream split(Resourcegroup=='RG12345',\n\tdisjoint: false) ~> splitresourcegroup@(naam, othercolumns)\nsplitresourcegroup@naam sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> logstreamoutput"
+					"script": "source(output(\n\t\tId as string,\n\t\tCorrelationid as string,\n\t\tOperationname as string,\n\t\tStatus as string,\n\t\tEventcategory as string,\n\t\tLevel as string,\n\t\tTime as string,\n\t\tSubscription as string,\n\t\tEventinitiatedby as string,\n\t\tResourcetype as string,\n\t\tResourcegroup as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> logstream\nlogstream split(Resourcegroup=='RG12345',\n\tdisjoint: false) ~> splitresourcegroup@(naam, othercolumns)\nsplitresourcegroup@othercolumns sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> sinkothercolumns"
 				}
 			},
 			"dependsOn": []
