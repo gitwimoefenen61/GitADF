@@ -13,6 +13,213 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/GenerateParquet')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "CopyParquet",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "DelimitedTextSource",
+								"storeSettings": {
+									"type": "AzureBlobFSReadSettings",
+									"recursive": false,
+									"enablePartitionDiscovery": false
+								},
+								"formatSettings": {
+									"type": "DelimitedTextReadSettings"
+								}
+							},
+							"sink": {
+								"type": "ParquetSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "ParquetWriteSettings"
+								}
+							},
+							"enableStaging": false,
+							"translator": {
+								"type": "TabularTranslator",
+								"mappings": [
+									{
+										"source": {
+											"name": "Id",
+											"type": "Int32",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Id",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Correlationid",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Correlationid",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Operationname",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Operationname",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Status",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Status",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Eventcategory",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Eventcategory",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Level",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Level",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Time",
+											"type": "DateTime",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Time",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Subscription",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Subscription",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Eventinitiatedby",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Eventinitiatedby",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Resourcetype",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Resourcetype",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									},
+									{
+										"source": {
+											"name": "Resourcegroup",
+											"type": "String",
+											"physicalType": "String"
+										},
+										"sink": {
+											"name": "Resourcegroup",
+											"type": "String",
+											"physicalType": "UTF8"
+										}
+									}
+								],
+								"typeConversion": true,
+								"typeConversionSettings": {
+									"allowDataTruncation": true,
+									"treatBooleanAsNumber": false
+								}
+							}
+						},
+						"inputs": [
+							{
+								"referenceName": "SourceDataset_r35",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "parquetOutput",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/ParquetToSynapse')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -1416,6 +1623,41 @@
 			"dependsOn": []
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/condionalsplit')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Logsourcetime",
+								"type": "DatasetReference"
+							},
+							"name": "logstream"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Logdt",
+								"type": "DatasetReference"
+							},
+							"name": "logstreamoutput"
+						}
+					],
+					"transformations": [
+						{
+							"name": "splitresourcegroup"
+						}
+					],
+					"script": "source(output(\n\t\tId as string,\n\t\tCorrelationid as string,\n\t\tOperationname as string,\n\t\tStatus as string,\n\t\tEventcategory as string,\n\t\tLevel as string,\n\t\tTime as string,\n\t\tSubscription as string,\n\t\tEventinitiatedby as string,\n\t\tResourcetype as string,\n\t\tResourcegroup as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> logstream\nlogstream split(Resourcegroup=='RG12345',\n\tdisjoint: false) ~> splitresourcegroup@(naam, othercolumns)\nsplitresourcegroup@naam sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> logstreamoutput"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/customerdataflow')]",
 			"type": "Microsoft.DataFactory/factories/dataflows",
 			"apiVersion": "2018-06-01",
@@ -1481,90 +1723,6 @@
 						}
 					],
 					"script": "source(output(\n\t\tcustomerid as integer,\n\t\tcustomername as string,\n\t\tregistered as boolean,\n\t\tcourses as string[],\n\t\tdetails as (mobile as string, city as string)\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tdocumentForm: 'arrayOfDocuments') ~> Customerstream\nCustomerstream foldDown(unroll(courses, courses),\n\tmapColumn(\n\t\tcourses,\n\t\tcustomerid,\n\t\tcustomername,\n\t\tregistered,\n\t\tmobile = details.mobile,\n\t\tcity = details.city\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> FlattenStream\nFlattenStream sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tcustomerid as integer,\n\t\tcustomername as string,\n\t\tregistered as boolean,\n\t\tcourses as string,\n\t\tmobile as string,\n\t\tcity as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tcustomerid,\n\t\tcustomername,\n\t\tregistered,\n\t\tcourses,\n\t\tmobile,\n\t\tcity\n\t)) ~> Customersynapse"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/dataflowexportdimproduct')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "AzureSqlnewdbdimprod",
-								"type": "DatasetReference"
-							},
-							"name": "dimproductstream"
-						},
-						{
-							"dataset": {
-								"referenceName": "AzureSqlnewdbdimexportprod",
-								"type": "DatasetReference"
-							},
-							"name": "dimexportproductsstream"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "AzureSqlnewdbdimexportprod",
-								"type": "DatasetReference"
-							},
-							"name": "sinkexportdimprod"
-						}
-					],
-					"transformations": [
-						{
-							"name": "Exists1"
-						}
-					],
-					"script": "source(output(\n\t\tProductID as integer,\n\t\tProductModelID as integer,\n\t\tProductSubcategoryID as integer,\n\t\tProductName as string,\n\t\tSafetyStockLevel as integer,\n\t\tProductModelName as string,\n\t\tProductSubCategoryName as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> dimproductstream\nsource(output(\n\t\tProductID as integer,\n\t\tProductModelID as integer,\n\t\tProductSubcategoryID as integer,\n\t\tProductName as string,\n\t\tSafetyStockLevel as integer,\n\t\tProductModelName as string,\n\t\tProductSubCategoryName as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> dimexportproductsstream\ndimproductstream, dimexportproductsstream exists(dimproductstream@ProductID == dimexportproductsstream@ProductID,\n\tnegate:true,\n\tbroadcast: 'auto')~> Exists1\nExists1 sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tProductID as integer,\n\t\tProductModelID as integer,\n\t\tProductSubcategoryID as integer,\n\t\tProductName as string,\n\t\tSafetyStockLevel as integer,\n\t\tProductModelName as string,\n\t\tProductSubCategoryName as string\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tProductID,\n\t\tProductModelID,\n\t\tProductSubcategoryID,\n\t\tProductName,\n\t\tSafetyStockLevel,\n\t\tProductModelName,\n\t\tProductSubCategoryName\n\t)) ~> sinkexportdimprod"
-				}
-			},
-			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/salesfactdataflow')]",
-			"type": "Microsoft.DataFactory/factories/dataflows",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"type": "MappingDataFlow",
-				"typeProperties": {
-					"sources": [
-						{
-							"dataset": {
-								"referenceName": "SalesOrderDetailDT",
-								"type": "DatasetReference"
-							},
-							"name": "SalesOrderDetailStream"
-						},
-						{
-							"dataset": {
-								"referenceName": "SalesOrderHeaderDt",
-								"type": "DatasetReference"
-							},
-							"name": "SalesOrderHeaderStream"
-						}
-					],
-					"sinks": [
-						{
-							"dataset": {
-								"referenceName": "SalesFactSynapse",
-								"type": "DatasetReference"
-							},
-							"name": "SalesFactSink"
-						}
-					],
-					"transformations": [
-						{
-							"name": "SalesJoin"
-						}
-					],
-					"script": "source(output(\n\t\tSalesOrderID as integer,\n\t\tSalesOrderDetailID as integer,\n\t\tCarrierTrackingNumber as string,\n\t\tOrderQty as integer,\n\t\tProductID as integer,\n\t\tSpecialOfferID as integer,\n\t\tUnitPrice as decimal(19,4),\n\t\tUnitPriceDiscount as decimal(19,4),\n\t\tLineTotal as decimal(38,6),\n\t\trowguid as string,\n\t\tModifiedDate as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> SalesOrderDetailStream\nsource(output(\n\t\tSalesOrderID as integer,\n\t\tRevisionNumber as integer,\n\t\tOrderDate as timestamp,\n\t\tDueDate as timestamp,\n\t\tShipDate as timestamp,\n\t\tStatus as integer,\n\t\tOnlineOrderFlag as boolean,\n\t\tSalesOrderNumber as string,\n\t\tPurchaseOrderNumber as string,\n\t\tAccountNumber as string,\n\t\tCustomerID as integer,\n\t\tSalesPersonID as integer,\n\t\tTerritoryID as integer,\n\t\tBillToAddressID as integer,\n\t\tShipToAddressID as integer,\n\t\tShipMethodID as integer,\n\t\tCreditCardID as integer,\n\t\tCreditCardApprovalCode as string,\n\t\tCurrencyRateID as integer,\n\t\tSubTotal as decimal(19,4),\n\t\tTaxAmt as decimal(19,4),\n\t\tFreight as decimal(19,4),\n\t\tTotalDue as decimal(19,4),\n\t\tComment as string,\n\t\trowguid as string,\n\t\tModifiedDate as timestamp\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tisolationLevel: 'READ_UNCOMMITTED',\n\tformat: 'table') ~> SalesOrderHeaderStream\nSalesOrderDetailStream, SalesOrderHeaderStream join(SalesOrderDetailStream@SalesOrderID == SalesOrderHeaderStream@SalesOrderID,\n\tjoinType:'left',\n\tbroadcast: 'auto')~> SalesJoin\nSalesJoin sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tinput(\n\t\tProductID as integer,\n\t\tSalesOrderID as integer,\n\t\tCustomerID as integer,\n\t\tOrderQty as integer,\n\t\tUnitPrice as decimal(19,4),\n\t\tOrderDate as timestamp,\n\t\tTaxAmt as decimal(19,4)\n\t),\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError',\n\tmapColumn(\n\t\tProductID,\n\t\tSalesOrderID = SalesOrderDetailStream@SalesOrderID,\n\t\tCustomerID,\n\t\tOrderQty,\n\t\tUnitPrice,\n\t\tOrderDate,\n\t\tTaxAmt\n\t)) ~> SalesFactSink"
 				}
 			},
 			"dependsOn": []

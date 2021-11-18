@@ -1902,6 +1902,53 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('factoryName'), '/slotpipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Data flow1",
+						"type": "ExecuteDataFlow",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "1.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataflow": {
+								"referenceName": "condionalsplit",
+								"type": "DataFlowReference",
+								"parameters": {},
+								"datasetParameters": {
+									"logstream": {},
+									"logstreamoutput": {}
+								}
+							},
+							"staging": {},
+							"compute": {
+								"coreCount": 8,
+								"computeType": "General"
+							},
+							"traceLevel": "Fine"
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/dataflows/condionalsplit')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/synapseline')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -3067,6 +3114,27 @@
 			},
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/linkedServices/AzureDataLakeStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/Logdt')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabaseNewDB",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "log2"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/AzureSqlDatabaseNewDB')]"
 			]
 		},
 		{
@@ -4586,6 +4654,44 @@
 			"dependsOn": [
 				"[concat(variables('factoryId'), '/datasets/Logsourcetime')]",
 				"[concat(variables('factoryId'), '/datasets/logtimeoutput')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/condionalsplit')]",
+			"type": "Microsoft.DataFactory/factories/dataflows",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "MappingDataFlow",
+				"typeProperties": {
+					"sources": [
+						{
+							"dataset": {
+								"referenceName": "Logsourcetime",
+								"type": "DatasetReference"
+							},
+							"name": "logstream"
+						}
+					],
+					"sinks": [
+						{
+							"dataset": {
+								"referenceName": "Logdt",
+								"type": "DatasetReference"
+							},
+							"name": "logstreamoutput"
+						}
+					],
+					"transformations": [
+						{
+							"name": "splitresourcegroup"
+						}
+					],
+					"script": "source(output(\n\t\tId as string,\n\t\tCorrelationid as string,\n\t\tOperationname as string,\n\t\tStatus as string,\n\t\tEventcategory as string,\n\t\tLevel as string,\n\t\tTime as string,\n\t\tSubscription as string,\n\t\tEventinitiatedby as string,\n\t\tResourcetype as string,\n\t\tResourcegroup as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> logstream\nlogstream split(Resourcegroup=='RG12345',\n\tdisjoint: false) ~> splitresourcegroup@(naam, othercolumns)\nsplitresourcegroup@naam sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tdeletable:false,\n\tinsertable:true,\n\tupdateable:false,\n\tupsertable:false,\n\tformat: 'table',\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true,\n\terrorHandlingOption: 'stopOnFirstError') ~> logstreamoutput"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/Logsourcetime')]",
+				"[concat(variables('factoryId'), '/datasets/Logdt')]"
 			]
 		},
 		{

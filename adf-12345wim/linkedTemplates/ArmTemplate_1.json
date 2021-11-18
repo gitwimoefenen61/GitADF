@@ -809,74 +809,21 @@
 			"dependsOn": []
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Logsourcetime')]",
+			"name": "[concat(parameters('factoryName'), '/Logdt')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "AzureDataLakeStorage",
+					"referenceName": "AzureSqlDatabaseNewDB",
 					"type": "LinkedServiceReference"
 				},
 				"annotations": [],
-				"type": "DelimitedText",
+				"type": "AzureSqlTable",
+				"schema": [],
 				"typeProperties": {
-					"location": {
-						"type": "AzureBlobFSLocation",
-						"fileName": "Log.csv",
-						"folderPath": "raw",
-						"fileSystem": "data"
-					},
-					"columnDelimiter": ",",
-					"escapeChar": "\\",
-					"firstRowAsHeader": true,
-					"quoteChar": "\""
-				},
-				"schema": [
-					{
-						"name": "Id",
-						"type": "String"
-					},
-					{
-						"name": "Correlationid",
-						"type": "String"
-					},
-					{
-						"name": "Operationname",
-						"type": "String"
-					},
-					{
-						"name": "Status",
-						"type": "String"
-					},
-					{
-						"name": "Eventcategory",
-						"type": "String"
-					},
-					{
-						"name": "Level",
-						"type": "String"
-					},
-					{
-						"name": "Time",
-						"type": "String"
-					},
-					{
-						"name": "Subscription",
-						"type": "String"
-					},
-					{
-						"name": "Eventinitiatedby",
-						"type": "String"
-					},
-					{
-						"name": "Resourcetype",
-						"type": "String"
-					},
-					{
-						"name": "Resourcegroup",
-						"type": "String"
-					}
-				]
+					"schema": "dbo",
+					"table": "log2"
+				}
 			},
 			"dependsOn": []
 		}
