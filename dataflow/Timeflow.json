@@ -1,0 +1,32 @@
+{
+	"name": "Timeflow",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "Logsourcetime",
+						"type": "DatasetReference"
+					},
+					"name": "Logsource"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "logtimeoutput",
+						"type": "DatasetReference"
+					},
+					"name": "sinklogtimeoutput"
+				}
+			],
+			"transformations": [
+				{
+					"name": "changedtime"
+				}
+			],
+			"script": "source(output(\n\t\tId as string,\n\t\tCorrelationid as string,\n\t\tOperationname as string,\n\t\tStatus as string,\n\t\tEventcategory as string,\n\t\tLevel as string,\n\t\tTime as string,\n\t\tSubscription as string,\n\t\tEventinitiatedby as string,\n\t\tResourcetype as string,\n\t\tResourcegroup as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false) ~> Logsource\nLogsource derive(Time = toTimestamp(concat(substring(Time,0,10),' ',substring(Time,12,8)),'yyyy-MM-dd HH:mm:ss')) ~> changedtime\nchangedtime sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tpartitionFileNames:['log.csv'],\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> sinklogtimeoutput"
+		}
+	}
+}
