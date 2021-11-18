@@ -1,0 +1,16 @@
+{
+	"name": "Logdt",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureSqlDatabaseNewDB",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "log2"
+		}
+	}
+}
